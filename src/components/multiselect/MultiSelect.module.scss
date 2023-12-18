@@ -4,6 +4,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  row-gap: 5px;
   column-gap: 10px;
   font-size: 14px;
   padding: 5px;
@@ -13,10 +14,15 @@
     border-radius: 6px;
     border: 2px solid blueviolet;
   }
+}
+
+.inputContainer {
+  display: inline-block;
+  flex: 1;
 
   .input {
     all: unset;
-    flex: 1;
+    max-width: 100%;
     width: 100%;
   }
 }
