@@ -127,29 +127,32 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
   return (
     <>
       <div
-        className={classes.list}
+        className={classes.container}
         ref={containerRef}
         onClick={() => {
           setIsMenuExpanded((prev) => !prev);
           inputRef.current?.focus();
         }}
       >
-        {chips.map((chip) => (
-          <Chip key={chip.id} onDelete={onDelete} chip={chip} />
-        ))}
+        <div className={classes.list}>
+          {chips.map((chip) => (
+            <Chip key={chip.id} onDelete={onDelete} chip={chip} />
+          ))}
 
-        <div className={classes.inputContainer}>
-          <input
-            className={classes.input}
-            ref={inputRef}
-            onChange={onInputChange}
-            value={value}
-            onKeyDown={(e) => {
-              const action = getKeyboardActions()[e.key];
-              action?.(e);
-            }}
-          />
+          <div className={classes.inputContainer}>
+            <input
+              className={classes.input}
+              ref={inputRef}
+              onChange={onInputChange}
+              value={value}
+              onKeyDown={(e) => {
+                const action = getKeyboardActions()[e.key];
+                action?.(e);
+              }}
+            />
+          </div>
         </div>
+
         <FontAwesomeIcon icon={faCaretDown} className={classes.arrowDown} />
 
         {isMenuExpanded && (
