@@ -10,11 +10,13 @@ const MENU_OFFSET = 10;
 
 interface IProps {
   menuItems: IMenuItem[];
+  onChange?: (value: string) => void;
+  isLoading?: boolean;
 }
 
-function MultiSelect({ menuItems }: IProps) {
+function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
   const [chips, setChips] = useState<IChip[]>([]);
-  const [value, setValue] = useState<string>('');
+  const [value, setValue] = useState<string>();
   const [inputHeight, setInputHeight] = useState<number>();
   const inputRef = useRef<HTMLDivElement | null>(null);
 
@@ -22,13 +24,15 @@ function MultiSelect({ menuItems }: IProps) {
     setInputHeight(inputRef.current?.clientHeight);
   });
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
+  const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+
+    setValue(inputValue);
+    onChange?.(inputValue);
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') onAdd();
-
+    // if (e.key === 'Enter') onAdd();
     if (e.key === 'Backspace' && !value) {
       const id = chips[chips.length - 1]?.id;
 
@@ -38,10 +42,8 @@ function MultiSelect({ menuItems }: IProps) {
     }
   };
 
-  const onAdd = () => {
-    if (!value) return;
-
-    const newChip = { id: uuidv4(), label: value };
+  const onAdd = (item: IMenuItem) => {
+    const newChip = { id: item.id, label: item.label };
 
     setChips((prev) => [...prev, newChip]);
     setValue('');
@@ -51,6 +53,16 @@ function MultiSelect({ menuItems }: IProps) {
     const newChips = chips.filter((chip) => chip.id !== id);
 
     setChips(newChips);
+  };
+
+  const onClick = (item: IMenuItem) => {
+    if (isItemSelected(item.id)) return onDelete(item.id);
+
+    onAdd(item);
+  };
+
+  const isItemSelected = (id: string) => {
+    return chips.some((chip) => chip.id === id);
   };
 
   return (
@@ -63,14 +75,18 @@ function MultiSelect({ menuItems }: IProps) {
         <div className={classes.inputContainer}>
           <input
             className={classes.input}
-            onChange={onChange}
+            onChange={onInputChange}
             value={value}
             onKeyDown={onKeyDown}
           />
         </div>
+
         <ChipSelectMenu
           style={{ top: inputHeight && inputHeight + MENU_OFFSET }}
           items={menuItems}
+          isLoading={isLoading}
+          onClick={onClick}
+          chips={chips}
         />
       </div>
     </>

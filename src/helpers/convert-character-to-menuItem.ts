@@ -1,17 +1,24 @@
-import { ICharacter } from '../components/character-menu-item/CharacterMenuItem';
+interface RickAndMortyApiResponse<T> {
+  info: Record<string, any>;
+  results: T[];
+}
 
-type TCharacterResponse = {
+export type TCharacterResponseData = {
+  id: string;
   image: string;
   name: string;
-  episodes: string[];
+  episode: string[];
 } & Record<string, any>;
 
-const convertCharacterToMenuItem = (characterData: TCharacterResponse[]) => {
-  return characterData.map((item) => ({
-    image: item.image,
-    name: item.name,
-    episodeCount: item.episodes.length,
-  }));
+export type TCharacterResponse =
+  RickAndMortyApiResponse<TCharacterResponseData>;
+
+const convertCharacterToMenuItem = (characterData: TCharacterResponseData) => {
+  return {
+    image: characterData.image,
+    name: characterData.name,
+    episodeCount: characterData.episode.length,
+  };
 };
 
 export default convertCharacterToMenuItem;

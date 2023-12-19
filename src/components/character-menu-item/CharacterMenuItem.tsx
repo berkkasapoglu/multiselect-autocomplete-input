@@ -14,8 +14,8 @@ function CharacterMenuItem({ data }: IProps) {
     <div className={classes.item}>
       <img src={data.image} alt="" className={classes.img} />
       <div className={classes.info}>
-        <h3 className={classes.title}>asdasd</h3>
-        <p className={classes.count}>asdasdas</p>
+        <h3 className={classes.title}>{data.name}</h3>
+        <p className={classes.count}>{data.episodeCount} episodes</p>
       </div>
     </div>
   );

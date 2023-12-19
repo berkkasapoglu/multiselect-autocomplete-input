@@ -1,5 +1,5 @@
-export interface IMenuItem {
-  selected: boolean;
+import { IChip } from '../chip/Chip.types';
+
+export type IMenuItem = {
   element: React.ReactNode;
-  onSelect: () => void;
-}
+} & IChip;

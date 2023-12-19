@@ -1,9 +1,12 @@
 import axios from 'axios';
 import axiosInstance from '../config/axios';
 
-const getCharacters = async () => {
-  const response = await axiosInstance.get('character');
+const getCharactersByName = async (name: string) => {
+  const searchParams = new URLSearchParams({ name });
+  const urlParams = name ? `?${searchParams.toString()}` : '';
+
+  const response = await axiosInstance.get(`character${urlParams}`);
   return response.data;
 };
 
-export default getCharacters;
+export default getCharactersByName;

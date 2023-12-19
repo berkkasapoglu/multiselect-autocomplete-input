@@ -1,21 +1,26 @@
 import { IMenuItem } from './MenuItem.types';
 import classes from './MenuItem.module.scss';
+import { IChipMenuProps } from '../chip-select-menu/ChipSelectMenu';
 
 interface IProps {
   children: React.ReactNode;
   item: IMenuItem;
+  onClick: IChipMenuProps['onClick'];
+  chips: IChipMenuProps['chips'];
 }
 
-function MenuItem({ children, item }: IProps) {
+function MenuItem({ children, item, onClick, chips }: IProps) {
+  const isItemSelected = chips.some((chip) => chip.id === item.id);
+
   return (
-    <div className={classes.item} onClick={item.onSelect}>
+    <li className={classes.item} onClick={() => onClick(item)}>
       <input
         type="checkbox"
-        checked={item.selected}
+        checked={isItemSelected}
         className={classes.checkbox}
       />
       {children}
-    </div>
+    </li>
   );
 }
 export default MenuItem;

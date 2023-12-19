@@ -1,26 +1,45 @@
 import classes from './App.module.scss';
 import MultiSelect from './components/multiselect/MultiSelect';
 import { useQuery } from 'react-query';
-import getCharacters from './services/get-characters';
 import CharacterMenuItem from './components/character-menu-item/CharacterMenuItem';
+import convertCharacterToMenuItem, {
+  TCharacterResponse,
+  TCharacterResponseData,
+} from './helpers/convert-character-to-menuItem';
+import getCharactersByName from './services/get-characters';
+import { useState } from 'react';
+import { IMenuItem } from './components/menu-item/MenuItem.types';
 
 function App() {
-  const { data, error, isLoading } = useQuery('characters', getCharacters, {
-    retry: false,
-    refetchOnWindowFocus: false,
-  });
+  const [inputValue, setInputValue] = useState<string>('');
 
-  if (isLoading) return null;
-  console.log('data', data.results);
+  const { data, error, isLoading } = useQuery<TCharacterResponse>(
+    ['characters', inputValue],
+    () => getCharactersByName(inputValue),
+    {
+      retry: false,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const getMenuItems = (): IMenuItem[] => {
+    if (!data) return [];
+
+    return data.results.map((item: TCharacterResponseData) => ({
+      label: item.name,
+      id: item.id,
+      element: <CharacterMenuItem data={convertCharacterToMenuItem(item)} />,
+    }));
+  };
 
   return (
     <div className={classes.container}>
       <MultiSelect
-        menuItems={data.results.map((item: any) => ({
-          selected: true,
-          element: <CharacterMenuItem data={item} />,
-          onSelect: () => {},
-        }))}
+        menuItems={getMenuItems()}
+        onChange={(value) => {
+          setInputValue(value);
+        }}
+        isLoading={isLoading}
       />
     </div>
   );
