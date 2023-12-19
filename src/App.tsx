@@ -1,9 +1,8 @@
-import { useState } from 'react';
 import classes from './App.module.scss';
-import { IMenuItem } from './components/menu-item/MenuItem.types';
 import MultiSelect from './components/multiselect/MultiSelect';
 import { useQuery } from 'react-query';
 import getCharacters from './services/get-characters';
+import CharacterMenuItem from './components/character-menu-item/CharacterMenuItem';
 
 function App() {
   const { data, error, isLoading } = useQuery('characters', getCharacters, {
@@ -11,13 +10,17 @@ function App() {
     refetchOnWindowFocus: false,
   });
 
+  if (isLoading) return null;
+  console.log('data', data.results);
+
   return (
     <div className={classes.container}>
       <MultiSelect
-        menuItems={[
-          { selected: true, element: <p>test1</p>, onSelect: () => {} },
-          { selected: false, element: <p>test2</p>, onSelect: () => {} },
-        ]}
+        menuItems={data.results.map((item: any) => ({
+          selected: true,
+          element: <CharacterMenuItem data={item} />,
+          onSelect: () => {},
+        }))}
       />
     </div>
   );
