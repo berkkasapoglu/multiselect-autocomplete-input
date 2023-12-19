@@ -1,7 +1,25 @@
+:root {
+  --border-color: #94a3b8;
+
+  --bg-gray-100: #f8fafc;
+  --bg-gray200: #e2e8f0;
+  --bg-gray500: #94a3b8;
+  --bg-gray600: #64748b;
+  --bg-gray800: #475569;
+
+  --box-border-radius: 8px;
+
+  --bg-scroll: #c1c1c1;
+  --bg-scroll-hover: #7d7d7d;
+
+  --transition: 0.3s linear;
+}
+
 .container {
   position: absolute;
   inset: 0;
   display: flex;
   justify-content: center;
-  align-items: center;
+  top: 50px;
+  align-items: start;
 }

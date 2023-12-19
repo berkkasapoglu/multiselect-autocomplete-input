@@ -1,7 +1,9 @@
-.container {
+.list {
   position: relative;
   width: 350px;
-  border: 2px solid dodgerblue;
+  min-height: 35px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--box-border-radius);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -9,9 +11,20 @@
   column-gap: 10px;
   font-size: 14px;
   padding: 5px;
+
+  .arrowDown {
+    position: absolute;
+    right: 3%;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8rem;
+
+    color: var(--bg-gray800);
+  }
 }
 
 .inputContainer {
+  position: relative;
   display: inline-block;
   flex: 1;
 

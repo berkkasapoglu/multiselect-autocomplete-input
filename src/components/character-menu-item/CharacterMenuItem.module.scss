@@ -13,11 +13,14 @@
     flex: 1;
 
     .title {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
+      font-weight: 500;
     }
 
     .count {
-      font-size: 0.65rem;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--bg-gray600);
     }
   }
 }

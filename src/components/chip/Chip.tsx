@@ -12,7 +12,8 @@ interface IProps {
 function Chip({ chip, onDelete, removeable = true }: IProps) {
   return (
     <div className={classes.option}>
-      {chip.label}
+      <p>{chip.label}</p>
+
       {removeable && (
         <FontAwesomeIcon
           icon={faSquareXmark}

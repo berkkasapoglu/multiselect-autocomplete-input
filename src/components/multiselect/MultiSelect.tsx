@@ -11,6 +11,8 @@ import classes from './MultiSelect.module.scss';
 import { IChip } from '../chip/Chip.types';
 import ChipSelectMenu from '../chip-select-menu/ChipSelectMenu';
 import { IMenuItem } from '../menu-item/MenuItem.types';
+import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const MENU_OFFSET = 10;
 
@@ -125,7 +127,7 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
   return (
     <>
       <div
-        className={classes.container}
+        className={classes.list}
         ref={containerRef}
         onClick={() => {
           setIsMenuExpanded((prev) => !prev);
@@ -148,6 +150,7 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
             }}
           />
         </div>
+        <FontAwesomeIcon icon={faCaretDown} className={classes.arrowDown} />
 
         {isMenuExpanded && (
           <ChipSelectMenu

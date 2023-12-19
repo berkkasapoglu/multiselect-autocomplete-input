@@ -1,14 +1,17 @@
 .menu {
   position: absolute;
-  border: 2px solid gold;
   top: 0;
   right: 0;
   width: 100%;
-  height: 200px;
+  height: 350px;
   overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--box-border-radius);
+  background-color: var(--bg-gray-100);
 
   .focus {
-    background-color: violet;
+    background-color: var(--bg-gray200);
+    transition: var(--transition);
   }
 
   .spinner {
@@ -24,17 +27,17 @@
 
   /* Track */
   &::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: #fafafa;
   }
 
   /* Handle */
   &::-webkit-scrollbar-thumb {
-    background: #b2b2b2;
+    background: var(--bg-scroll);
     border-radius: 15px;
   }
 
   /* Handle on hover */
   &::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: var(--bg-scroll-hover);
   }
 }
