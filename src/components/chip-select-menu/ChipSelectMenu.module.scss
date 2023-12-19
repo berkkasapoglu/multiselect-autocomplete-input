@@ -11,6 +11,13 @@
     background-color: violet;
   }
 
+  .spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
   &::-webkit-scrollbar {
     width: 6px;
   }

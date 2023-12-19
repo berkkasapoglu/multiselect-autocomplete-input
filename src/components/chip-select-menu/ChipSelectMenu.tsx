@@ -4,6 +4,7 @@ import MenuItem from '../menu-item/MenuItem';
 import { IChip } from '../chip/Chip.types';
 import { MouseEvent, useEffect, useRef } from 'react';
 import useClickOutside from '../../hooks/useClickOutside';
+import LoadingIcon from '../common/loading-icon/LoadingIcon';
 
 export interface IChipMenuProps {
   items: IMenuItem[];
@@ -37,7 +38,11 @@ function ChipSelectMenu({
 
   return (
     <ul style={style} className={classes.menu} ref={menuRef}>
-      {isLoading && <p>Loading...</p>}
+      {isLoading && (
+        <div className={classes.spinner}>
+          <LoadingIcon />
+        </div>
+      )}
 
       {!isLoading &&
         items.map((item, idx) => (
