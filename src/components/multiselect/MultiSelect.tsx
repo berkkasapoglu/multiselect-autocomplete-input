@@ -18,10 +18,13 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
   const [chips, setChips] = useState<IChip[]>([]);
   const [value, setValue] = useState<string>();
   const [inputHeight, setInputHeight] = useState<number>();
-  const inputRef = useRef<HTMLDivElement | null>(null);
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [focusedItemIndex, setFocusedItemIndex] = useState<number>(0);
 
   useEffect(() => {
-    setInputHeight(inputRef.current?.clientHeight);
+    setInputHeight(containerRef.current?.clientHeight);
   });
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -32,6 +35,9 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowDown') onArrowDown();
+    if (e.key === 'ArrowUp') onArrowUp();
+
     // if (e.key === 'Enter') onAdd();
     if (e.key === 'Backspace' && !value) {
       const id = chips[chips.length - 1]?.id;
@@ -55,6 +61,26 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
     setChips(newChips);
   };
 
+  const onArrowUp = () => {
+    const menuListLength = menuItems.length;
+
+    setFocusedItemIndex((prev) => {
+      if (prev === 0) return menuListLength - 1;
+
+      return prev - 1;
+    });
+  };
+
+  const onArrowDown = () => {
+    const menuListLength = menuItems.length;
+
+    setFocusedItemIndex((prev) => {
+      if (prev === menuListLength - 1) return 0;
+
+      return prev + 1;
+    });
+  };
+
   const onClick = (item: IMenuItem) => {
     if (isItemSelected(item.id)) return onDelete(item.id);
 
@@ -67,7 +93,11 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
 
   return (
     <>
-      <div className={classes.container} ref={inputRef}>
+      <div
+        className={classes.container}
+        ref={containerRef}
+        onClick={() => inputRef.current?.focus()}
+      >
         {chips.map((chip) => (
           <Chip key={chip.id} onDelete={onDelete} chip={chip} />
         ))}
@@ -75,6 +105,7 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
         <div className={classes.inputContainer}>
           <input
             className={classes.input}
+            ref={inputRef}
             onChange={onInputChange}
             value={value}
             onKeyDown={onKeyDown}
@@ -87,6 +118,7 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
           isLoading={isLoading}
           onClick={onClick}
           chips={chips}
+          focusIndex={focusedItemIndex}
         />
       </div>
     </>
