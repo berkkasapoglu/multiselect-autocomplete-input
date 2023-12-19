@@ -28,7 +28,12 @@ function App() {
     return data.results.map((item: TCharacterResponseData) => ({
       label: item.name,
       id: item.id,
-      element: <CharacterMenuItem data={convertCharacterToMenuItem(item)} />,
+      element: (
+        <CharacterMenuItem
+          data={convertCharacterToMenuItem(item)}
+          inputValue={inputValue}
+        />
+      ),
     }));
   };
 
