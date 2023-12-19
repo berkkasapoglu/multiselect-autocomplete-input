@@ -1,11 +1,25 @@
+import { faSquareXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classes from './Chip.module.scss';
+import { IChip } from './Chip.types';
 
 interface IProps {
-  name: string;
-  closeable?: boolean;
+  chip: IChip;
+  onDelete: (id: string) => void;
+  removeable?: boolean;
 }
 
-function Chip({ name, closeable = true }: IProps) {
-  return <div className={classes.option}>{name}</div>;
+function Chip({ chip, onDelete, removeable = true }: IProps) {
+  return (
+    <div className={classes.option}>
+      {chip.label}
+      {removeable && (
+        <FontAwesomeIcon
+          icon={faSquareXmark}
+          onClick={() => onDelete(chip.id)}
+        />
+      )}
+    </div>
+  );
 }
 export default Chip;

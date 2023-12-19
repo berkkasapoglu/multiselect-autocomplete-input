@@ -1,9 +1,11 @@
 import { ChangeEvent, KeyboardEvent, useState } from 'react';
 import Chip from '../chip/Chip';
 import classes from './MultiSelect.module.scss';
+import { v4 as uuidv4 } from 'uuid';
+import { IChip } from '../chip/Chip.types';
 
 function MultiSelect() {
-  const [options, setOptions] = useState<string[]>([]);
+  const [chips, setChips] = useState<IChip[]>([]);
   const [value, setValue] = useState<string>('');
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -11,22 +13,36 @@ function MultiSelect() {
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      if (!value) return;
-
-      setOptions((prev) => [...prev, value]);
-      setValue('');
-    }
+    if (e.key === 'Enter') onAdd();
 
     if (e.key === 'Backspace' && !value) {
-      setOptions(options.slice(0, -1));
+      const id = chips[chips.length - 1]?.id;
+
+      if (!id) return;
+
+      onDelete(id);
     }
+  };
+
+  const onAdd = () => {
+    if (!value) return;
+
+    const newChip = { id: uuidv4(), label: value };
+
+    setChips((prev) => [...prev, newChip]);
+    setValue('');
+  };
+
+  const onDelete = (id: string) => {
+    const newChips = chips.filter((chip) => chip.id !== id);
+
+    setChips(newChips);
   };
 
   return (
     <div className={classes.container}>
-      {options.map((option, idx) => (
-        <Chip key={idx} name={option} />
+      {chips.map((chip) => (
+        <Chip key={chip.id} onDelete={onDelete} chip={chip} />
       ))}
 
       <div className={classes.inputContainer} data-value={value}>
