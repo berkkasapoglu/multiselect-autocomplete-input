@@ -1,0 +1,11 @@
+.item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 10px;
+  border-bottom: 1px solid gray;
+
+  .checkbox {
+    margin: 0;
+  }
+}
