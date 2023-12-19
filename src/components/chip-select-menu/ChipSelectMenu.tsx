@@ -12,6 +12,7 @@ export interface IChipMenuProps {
   style?: React.CSSProperties;
   chips: IChip[];
   focusIndex: number;
+  setFocusIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
 function ChipSelectMenu({
@@ -21,6 +22,7 @@ function ChipSelectMenu({
   onClick,
   chips,
   focusIndex,
+  setFocusIndex,
 }: IChipMenuProps) {
   const itemsRef = useRef<HTMLLIElement[]>([]);
 
@@ -37,6 +39,7 @@ function ChipSelectMenu({
       {!isLoading &&
         items.map((item, idx) => (
           <MenuItem
+            key={item.id}
             item={item}
             onClick={onClick}
             chips={chips}
@@ -45,6 +48,9 @@ function ChipSelectMenu({
               if (!el) return;
 
               itemsRef.current[idx] = el;
+            }}
+            onMouseEnter={() => {
+              setFocusIndex(idx);
             }}
           >
             {item.element}

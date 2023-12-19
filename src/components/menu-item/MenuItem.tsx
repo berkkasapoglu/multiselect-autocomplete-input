@@ -10,14 +10,16 @@ interface IProps {
   onClick: IChipMenuProps['onClick'];
   chips: IChipMenuProps['chips'];
   className?: string;
+  onMouseEnter?: () => void;
 }
 
 const MenuItem = forwardRef<HTMLLIElement, IProps>(
-  ({ children, item, onClick, chips, className }, ref) => {
+  ({ children, item, onClick, chips, className, onMouseEnter }, ref) => {
     const isItemSelected = chips.some((chip) => chip.id === item.id);
 
     return (
       <li
+        onMouseEnter={onMouseEnter}
         className={classNames(classes.item, className)}
         ref={ref}
         onClick={() => onClick(item)}

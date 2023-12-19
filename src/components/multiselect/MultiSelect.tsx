@@ -39,9 +39,10 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
     if (e.key === 'ArrowUp') onArrowUp();
 
     if (e.key === 'Enter' || e.key === 'Tab') {
-      console.log('e.key', e.key, inputRef.current);
       const focusedItem = menuItems[focusedItemIndex];
       if (!focusedItem) return;
+
+      if (isItemSelected(focusedItem.id)) return onDelete(focusedItem.id);
 
       onAdd(focusedItem);
     }
@@ -126,6 +127,7 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
           onClick={onClick}
           chips={chips}
           focusIndex={focusedItemIndex}
+          setFocusIndex={setFocusedItemIndex}
         />
       </div>
     </>
