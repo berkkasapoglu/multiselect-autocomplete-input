@@ -1,4 +1,4 @@
-import classes from './ChipSelectMenu.module.scss';
+import classes from './SelectMenu.module.scss';
 import { IMenuItem } from '../menu-item/MenuItem.types';
 import MenuItem from '../menu-item/MenuItem';
 import { IChip } from '../chip/Chip.types';
@@ -17,7 +17,7 @@ export interface IChipMenuProps {
   closeDialog: (e: Event) => void;
 }
 
-function ChipSelectMenu({
+function SelectMenu({
   style,
   items,
   isLoading,
@@ -67,4 +67,4 @@ function ChipSelectMenu({
     </ul>
   );
 }
-export default ChipSelectMenu;
+export default SelectMenu;

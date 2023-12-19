@@ -1,18 +1,12 @@
-import {
-  ChangeEvent,
-  KeyboardEvent,
-  MouseEvent,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import Chip from '../chip/Chip';
 import classes from './MultiSelect.module.scss';
 import { IChip } from '../chip/Chip.types';
-import ChipSelectMenu from '../chip-select-menu/ChipSelectMenu';
+import ChipSelectMenu from '../select-menu/SelectMenu';
 import { IMenuItem } from '../menu-item/MenuItem.types';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import useMultiSelectList from '../../hooks/useMultiSelectList';
 
 const MENU_OFFSET = 10;
 
@@ -23,14 +17,23 @@ interface IProps {
 }
 
 function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
-  const [chips, setChips] = useState<IChip[]>([]);
   const [value, setValue] = useState<string>('');
   const [inputHeight, setInputHeight] = useState<number>();
-  const [focusedItemIndex, setFocusedItemIndex] = useState<number>(0);
-  const [isMenuExpanded, setIsMenuExpanded] = useState(false);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const {
+    chips,
+    onDelete,
+    onClickItem,
+    onArrowDown,
+    onArrowUp,
+    isMenuExpanded,
+    setIsMenuExpanded,
+    focusedItemIndex,
+    setFocusedItemIndex,
+  } = useMultiSelectList({ menuItems, setInputValue: setValue });
 
   const getKeyboardActions = (): Record<string, Function> => {
     return {
@@ -42,8 +45,8 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
 
         onDelete(chip.id);
       },
-      Tab: onClick,
-      Enter: onClick,
+      Tab: onClickItem,
+      Enter: onClickItem,
       ArrowUp: onArrowUp,
       ArrowDown: onArrowDown,
     };
@@ -64,64 +67,6 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
     setValue(inputValue);
 
     setIsMenuExpanded(true);
-  };
-
-  const onAdd = (item: IMenuItem) => {
-    const newChip = { id: item.id, label: item.label };
-
-    setChips((prev) => [...prev, newChip]);
-  };
-
-  const onDelete = (id: string) => {
-    const newChips = chips.filter((chip) => chip.id !== id);
-
-    setChips(newChips);
-  };
-
-  const onArrowUp = (e: KeyboardEvent<HTMLInputElement>) => {
-    const menuListLength = menuItems.length;
-
-    setFocusedItemIndex((prev) => {
-      if (prev === 0) return menuListLength - 1;
-
-      return prev - 1;
-    });
-
-    if (!isMenuExpanded) setIsMenuExpanded(true);
-
-    e.preventDefault();
-  };
-
-  const onArrowDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    const menuListLength = menuItems.length;
-
-    setFocusedItemIndex((prev) => {
-      if (prev === menuListLength - 1) return 0;
-
-      return prev + 1;
-    });
-
-    if (!isMenuExpanded) setIsMenuExpanded(true);
-
-    e.preventDefault();
-  };
-
-  const onClick = (e: MouseEvent<HTMLLIElement>) => {
-    if (!isMenuExpanded) return;
-
-    const item = menuItems[focusedItemIndex];
-    if (!item) return;
-
-    if (isItemSelected(item.id)) onDelete(item.id);
-    else onAdd(item);
-
-    setValue('');
-
-    e.preventDefault();
-  };
-
-  const isItemSelected = (id: string) => {
-    return chips.some((chip) => chip.id === id);
   };
 
   return (
@@ -161,7 +106,7 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
             items={menuItems}
             isLoading={isLoading}
             onClick={(e) => {
-              onClick(e);
+              onClickItem(e);
               inputRef.current?.focus();
             }}
             chips={chips}

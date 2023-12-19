@@ -1,8 +1,8 @@
 import { IMenuItem } from './MenuItem.types';
 import classes from './MenuItem.module.scss';
-import { IChipMenuProps } from '../chip-select-menu/ChipSelectMenu';
 import { forwardRef } from 'react';
 import classNames from 'classnames';
+import { IChipMenuProps } from '../select-menu/SelectMenu';
 
 interface IProps {
   children: React.ReactNode;
