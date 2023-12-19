@@ -3,6 +3,7 @@ import classes from './MenuItem.module.scss';
 import { IChipMenuProps } from '../chip-select-menu/ChipSelectMenu';
 import { forwardRef } from 'react';
 import classNames from 'classnames';
+import useClickOutside from '../../hooks/useClickOutside';
 
 interface IProps {
   children: React.ReactNode;
@@ -22,9 +23,13 @@ const MenuItem = forwardRef<HTMLLIElement, IProps>(
         onMouseEnter={onMouseEnter}
         className={classNames(classes.item, className)}
         ref={ref}
-        onClick={() => onClick(item)}
+        onClick={(e) => {
+          onClick(item);
+          e.stopPropagation();
+        }}
       >
         <input
+          readOnly
           type="checkbox"
           checked={isItemSelected}
           className={classes.checkbox}

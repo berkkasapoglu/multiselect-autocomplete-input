@@ -1,7 +1,6 @@
 import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import Chip from '../chip/Chip';
 import classes from './MultiSelect.module.scss';
-import { v4 as uuidv4 } from 'uuid';
 import { IChip } from '../chip/Chip.types';
 import ChipSelectMenu from '../chip-select-menu/ChipSelectMenu';
 import { IMenuItem } from '../menu-item/MenuItem.types';
@@ -16,9 +15,10 @@ interface IProps {
 
 function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
   const [chips, setChips] = useState<IChip[]>([]);
-  const [value, setValue] = useState<string>();
+  const [value, setValue] = useState<string>('');
   const [inputHeight, setInputHeight] = useState<number>();
   const [focusedItemIndex, setFocusedItemIndex] = useState<number>(0);
+  const [isMenuExpanded, setIsMenuExpanded] = useState(false);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -27,25 +27,21 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
     setInputHeight(containerRef.current?.clientHeight);
   });
 
+  useEffect(() => {
+    onChange?.(value);
+    setFocusedItemIndex(0);
+  }, [value, onChange]);
+
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
 
     setValue(inputValue);
-    onChange?.(inputValue);
+
+    setIsMenuExpanded(true);
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'ArrowDown') onArrowDown();
-    if (e.key === 'ArrowUp') onArrowUp();
-
-    if (e.key === 'Enter' || e.key === 'Tab') {
-      const focusedItem = menuItems[focusedItemIndex];
-      if (!focusedItem) return;
-
-      if (isItemSelected(focusedItem.id)) return onDelete(focusedItem.id);
-
-      onAdd(focusedItem);
-    }
+    if (e.key === 'Escape') setIsMenuExpanded(false);
 
     if (e.key === 'Backspace' && !value) {
       const id = chips[chips.length - 1]?.id;
@@ -54,13 +50,33 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
 
       onDelete(id);
     }
+
+    if (e.key === 'ArrowDown') {
+      onArrowDown();
+      e.preventDefault();
+    }
+
+    if (e.key === 'ArrowUp') {
+      onArrowUp();
+      e.preventDefault();
+    }
+
+    if (!isMenuExpanded) return;
+
+    if (e.key === 'Enter' || e.key === 'Tab') {
+      const focusedItem = menuItems[focusedItemIndex];
+      if (!focusedItem) return;
+
+      onClick(focusedItem);
+
+      e.preventDefault();
+    }
   };
 
   const onAdd = (item: IMenuItem) => {
     const newChip = { id: item.id, label: item.label };
 
     setChips((prev) => [...prev, newChip]);
-    setValue('');
   };
 
   const onDelete = (id: string) => {
@@ -77,6 +93,8 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
 
       return prev - 1;
     });
+
+    if (!isMenuExpanded) setIsMenuExpanded(true);
   };
 
   const onArrowDown = () => {
@@ -87,12 +105,15 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
 
       return prev + 1;
     });
+
+    if (!isMenuExpanded) setIsMenuExpanded(true);
   };
 
   const onClick = (item: IMenuItem) => {
-    if (isItemSelected(item.id)) return onDelete(item.id);
+    if (isItemSelected(item.id)) onDelete(item.id);
+    else onAdd(item);
 
-    onAdd(item);
+    setValue('');
   };
 
   const isItemSelected = (id: string) => {
@@ -104,7 +125,10 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
       <div
         className={classes.container}
         ref={containerRef}
-        onClick={() => inputRef.current?.focus()}
+        onClick={() => {
+          setIsMenuExpanded((prev) => !prev);
+          inputRef.current?.focus();
+        }}
       >
         {chips.map((chip) => (
           <Chip key={chip.id} onDelete={onDelete} chip={chip} />
@@ -120,15 +144,25 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
           />
         </div>
 
-        <ChipSelectMenu
-          style={{ top: inputHeight && inputHeight + MENU_OFFSET }}
-          items={menuItems}
-          isLoading={isLoading}
-          onClick={onClick}
-          chips={chips}
-          focusIndex={focusedItemIndex}
-          setFocusIndex={setFocusedItemIndex}
-        />
+        {isMenuExpanded && (
+          <ChipSelectMenu
+            style={{ top: inputHeight && inputHeight + MENU_OFFSET }}
+            items={menuItems}
+            isLoading={isLoading}
+            onClick={(e) => {
+              onClick(e);
+              inputRef.current?.focus();
+            }}
+            chips={chips}
+            focusIndex={focusedItemIndex}
+            setFocusIndex={setFocusedItemIndex}
+            closeDialog={(e) => {
+              if (containerRef.current?.contains(e.target as Node)) return;
+
+              setIsMenuExpanded(false);
+            }}
+          />
+        )}
       </div>
     </>
   );

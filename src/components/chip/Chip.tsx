@@ -16,8 +16,11 @@ function Chip({ chip, onDelete, removeable = true }: IProps) {
       {removeable && (
         <FontAwesomeIcon
           icon={faSquareXmark}
-          onClick={() => onDelete(chip.id)}
           className={classes.closeIcon}
+          onClick={(e) => {
+            onDelete(chip.id);
+            e.stopPropagation();
+          }}
         />
       )}
     </div>

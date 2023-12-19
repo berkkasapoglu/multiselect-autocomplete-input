@@ -3,7 +3,7 @@ import { IMenuItem } from '../menu-item/MenuItem.types';
 import MenuItem from '../menu-item/MenuItem';
 import { IChip } from '../chip/Chip.types';
 import { useEffect, useRef } from 'react';
-import classNames from 'classnames';
+import useClickOutside from '../../hooks/useClickOutside';
 
 export interface IChipMenuProps {
   items: IMenuItem[];
@@ -13,6 +13,7 @@ export interface IChipMenuProps {
   chips: IChip[];
   focusIndex: number;
   setFocusIndex: React.Dispatch<React.SetStateAction<number>>;
+  closeDialog: (e: Event) => void;
 }
 
 function ChipSelectMenu({
@@ -23,8 +24,10 @@ function ChipSelectMenu({
   chips,
   focusIndex,
   setFocusIndex,
+  closeDialog,
 }: IChipMenuProps) {
   const itemsRef = useRef<HTMLLIElement[]>([]);
+  const menuRef = useClickOutside<HTMLUListElement>(closeDialog);
 
   useEffect(() => {
     const focusedItemRef = itemsRef.current[focusIndex];
@@ -33,7 +36,7 @@ function ChipSelectMenu({
   }, [focusIndex, items]);
 
   return (
-    <ul style={style} className={classes.menu}>
+    <ul style={style} className={classes.menu} ref={menuRef}>
       {isLoading && <p>Loading...</p>}
 
       {!isLoading &&
