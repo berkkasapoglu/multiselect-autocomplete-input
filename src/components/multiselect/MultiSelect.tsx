@@ -18,10 +18,10 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
   const [chips, setChips] = useState<IChip[]>([]);
   const [value, setValue] = useState<string>();
   const [inputHeight, setInputHeight] = useState<number>();
+  const [focusedItemIndex, setFocusedItemIndex] = useState<number>(0);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [focusedItemIndex, setFocusedItemIndex] = useState<number>(0);
 
   useEffect(() => {
     setInputHeight(containerRef.current?.clientHeight);
@@ -38,7 +38,14 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
     if (e.key === 'ArrowDown') onArrowDown();
     if (e.key === 'ArrowUp') onArrowUp();
 
-    // if (e.key === 'Enter') onAdd();
+    if (e.key === 'Enter' || e.key === 'Tab') {
+      console.log('e.key', e.key, inputRef.current);
+      const focusedItem = menuItems[focusedItemIndex];
+      if (!focusedItem) return;
+
+      onAdd(focusedItem);
+    }
+
     if (e.key === 'Backspace' && !value) {
       const id = chips[chips.length - 1]?.id;
 
