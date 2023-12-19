@@ -1,4 +1,5 @@
 import { ChangeEvent, KeyboardEvent, useState } from 'react';
+import Chip from '../chip/Chip';
 import classes from './MultiSelect.module.scss';
 
 function MultiSelect() {
@@ -11,6 +12,8 @@ function MultiSelect() {
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
+      if (!value) return;
+
       setOptions((prev) => [...prev, value]);
       setValue('');
     }
@@ -23,9 +26,7 @@ function MultiSelect() {
   return (
     <div className={classes.container}>
       {options.map((option, idx) => (
-        <div key={idx} className={classes.option}>
-          {option}
-        </div>
+        <Chip key={idx} name={option} />
       ))}
 
       <div className={classes.inputContainer} data-value={value}>
