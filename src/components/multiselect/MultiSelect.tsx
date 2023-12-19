@@ -1,4 +1,11 @@
-import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  KeyboardEvent,
+  MouseEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import Chip from '../chip/Chip';
 import classes from './MultiSelect.module.scss';
 import { IChip } from '../chip/Chip.types';
@@ -23,6 +30,23 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
+  const getKeyboardActions = (): Record<string, Function> => {
+    return {
+      Escape: () => setIsMenuExpanded(false),
+      Backspace: () => {
+        if (!chips.length || value) return;
+
+        const chip = chips.slice(-1)[0] as IChip;
+
+        onDelete(chip.id);
+      },
+      Tab: onClick,
+      Enter: onClick,
+      ArrowUp: onArrowUp,
+      ArrowDown: onArrowDown,
+    };
+  };
+
   useEffect(() => {
     setInputHeight(containerRef.current?.clientHeight);
   });
@@ -40,39 +64,6 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
     setIsMenuExpanded(true);
   };
 
-  const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Escape') setIsMenuExpanded(false);
-
-    if (e.key === 'Backspace' && !value) {
-      const id = chips[chips.length - 1]?.id;
-
-      if (!id) return;
-
-      onDelete(id);
-    }
-
-    if (e.key === 'ArrowDown') {
-      onArrowDown();
-      e.preventDefault();
-    }
-
-    if (e.key === 'ArrowUp') {
-      onArrowUp();
-      e.preventDefault();
-    }
-
-    if (!isMenuExpanded) return;
-
-    if (e.key === 'Enter' || e.key === 'Tab') {
-      const focusedItem = menuItems[focusedItemIndex];
-      if (!focusedItem) return;
-
-      onClick(focusedItem);
-
-      e.preventDefault();
-    }
-  };
-
   const onAdd = (item: IMenuItem) => {
     const newChip = { id: item.id, label: item.label };
 
@@ -85,7 +76,7 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
     setChips(newChips);
   };
 
-  const onArrowUp = () => {
+  const onArrowUp = (e: KeyboardEvent<HTMLInputElement>) => {
     const menuListLength = menuItems.length;
 
     setFocusedItemIndex((prev) => {
@@ -95,9 +86,11 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
     });
 
     if (!isMenuExpanded) setIsMenuExpanded(true);
+
+    e.preventDefault();
   };
 
-  const onArrowDown = () => {
+  const onArrowDown = (e: KeyboardEvent<HTMLInputElement>) => {
     const menuListLength = menuItems.length;
 
     setFocusedItemIndex((prev) => {
@@ -107,13 +100,22 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
     });
 
     if (!isMenuExpanded) setIsMenuExpanded(true);
+
+    e.preventDefault();
   };
 
-  const onClick = (item: IMenuItem) => {
+  const onClick = (e: MouseEvent<HTMLLIElement>) => {
+    if (!isMenuExpanded) return;
+
+    const item = menuItems[focusedItemIndex];
+    if (!item) return;
+
     if (isItemSelected(item.id)) onDelete(item.id);
     else onAdd(item);
 
     setValue('');
+
+    e.preventDefault();
   };
 
   const isItemSelected = (id: string) => {
@@ -140,7 +142,10 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
             ref={inputRef}
             onChange={onInputChange}
             value={value}
-            onKeyDown={onKeyDown}
+            onKeyDown={(e) => {
+              const action = getKeyboardActions()[e.key];
+              action?.(e);
+            }}
           />
         </div>
 

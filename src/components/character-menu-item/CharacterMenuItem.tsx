@@ -1,9 +1,5 @@
 import classes from './CharacterMenuItem.module.scss';
-export interface ICharacter {
-  image: string;
-  name: string;
-  episodeCount: number;
-}
+import { ICharacter } from './CharacterMenuItem.types';
 
 interface IProps {
   data: ICharacter;

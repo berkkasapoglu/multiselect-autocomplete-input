@@ -2,12 +2,12 @@ import classes from './ChipSelectMenu.module.scss';
 import { IMenuItem } from '../menu-item/MenuItem.types';
 import MenuItem from '../menu-item/MenuItem';
 import { IChip } from '../chip/Chip.types';
-import { useEffect, useRef } from 'react';
+import { MouseEvent, useEffect, useRef } from 'react';
 import useClickOutside from '../../hooks/useClickOutside';
 
 export interface IChipMenuProps {
   items: IMenuItem[];
-  onClick: (item: IMenuItem) => void;
+  onClick: (e: MouseEvent<HTMLLIElement>) => void;
   isLoading?: boolean;
   style?: React.CSSProperties;
   chips: IChip[];
