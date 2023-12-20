@@ -75,7 +75,10 @@ function useMultiSelectList({
     e.preventDefault();
   };
 
-  const onArrowLeft = () => {
+  const onArrowLeft = (e: KeyboardEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    if (Number(target.selectionStart) >= 1) return;
+
     if (!focusedChipId) return setFocusedChipId(chips[chips.length - 1]?.id);
 
     const prevFocusIndex = chips.findIndex((chip) => chip.id === focusedChipId);
@@ -83,7 +86,10 @@ function useMultiSelectList({
     setFocusedChipId(chips[prevFocusIndex - 1]?.id);
   };
 
-  const onArrowRight = () => {
+  const onArrowRight = (e: KeyboardEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    if (Number(target.selectionStart) <= target.value.length - 1) return;
+
     if (!focusedChipId) return setFocusedChipId(chips[0]?.id);
 
     const prevFocusIndex = chips.findIndex((chip) => chip.id === focusedChipId);
