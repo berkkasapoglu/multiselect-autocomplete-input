@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash';
 import { KeyboardEvent, MouseEvent, useState } from 'react';
 import { IChip } from '../components/chip/Chip.types';
 import { IMenuItem } from '../components/menu-item/MenuItem.types';
@@ -12,6 +13,7 @@ function useMultiSelectList({
   const [chips, setChips] = useState<IChip[]>([]);
   const [isMenuExpanded, setIsMenuExpanded] = useState(false);
   const [focusedItemIndex, setFocusedItemIndex] = useState<number>(0);
+  const [focusedChipId, setFocusedChipId] = useState<string>();
 
   const onAdd = (item: IMenuItem) => {
     const newChip = { id: item.id, label: item.label };
@@ -54,6 +56,13 @@ function useMultiSelectList({
   };
 
   const onClickItem = (e: MouseEvent<HTMLLIElement>) => {
+    if (focusedChipId) {
+      onDelete(focusedChipId);
+      setFocusedChipId(undefined);
+      e.preventDefault();
+      return;
+    }
+
     if (!isMenuExpanded) return;
 
     const item = menuItems[focusedItemIndex];
@@ -64,6 +73,28 @@ function useMultiSelectList({
 
     setInputValue('');
     e.preventDefault();
+  };
+
+  const onArrowLeft = () => {
+    if (!focusedChipId) return setFocusedChipId(chips[chips.length - 1]?.id);
+
+    const prevFocusIndex = chips.findIndex((chip) => chip.id === focusedChipId);
+
+    setFocusedChipId(chips[prevFocusIndex - 1]?.id);
+  };
+
+  const onArrowRight = () => {
+    if (!focusedChipId) return setFocusedChipId(chips[0]?.id);
+
+    const prevFocusIndex = chips.findIndex((chip) => chip.id === focusedChipId);
+
+    setFocusedChipId(chips[prevFocusIndex + 1]?.id);
+  };
+
+  const onEscape = () => {
+    if (isMenuExpanded) return setIsMenuExpanded(false);
+
+    if (focusedChipId) setFocusedChipId(undefined);
   };
 
   const isItemSelected = (id: string) => {
@@ -82,6 +113,10 @@ function useMultiSelectList({
     setIsMenuExpanded,
     focusedItemIndex,
     setFocusedItemIndex,
+    onArrowLeft,
+    onEscape,
+    focusedChipId,
+    onArrowRight,
   };
 }
 export default useMultiSelectList;

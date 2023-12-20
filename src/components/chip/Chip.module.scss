@@ -1,4 +1,4 @@
-.option {
+.chip {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -7,6 +7,7 @@
   padding: 5px 8px;
   border-radius: var(--box-border-radius);
   background-color: var(--bg-gray200);
+  border: 2px solid transparent;
 
   .closeIcon {
     font-size: 1.2rem;
@@ -19,4 +20,8 @@
       color: var(--bg-gray600);
     }
   }
+}
+
+.focus {
+  border: 2px solid black;
 }

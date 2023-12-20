@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import Chip from '../chip/Chip';
 import classes from './MultiSelect.module.scss';
 import { IChip } from '../chip/Chip.types';
@@ -33,11 +33,15 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
     setIsMenuExpanded,
     focusedItemIndex,
     setFocusedItemIndex,
+    onArrowLeft,
+    onArrowRight,
+    onEscape,
+    focusedChipId,
   } = useMultiSelectList({ menuItems, setInputValue: setValue });
 
   const getKeyboardActions = (): Record<string, Function> => {
     return {
-      Escape: () => setIsMenuExpanded(false),
+      Escape: onEscape,
       Backspace: () => {
         if (!chips.length || value) return;
 
@@ -49,6 +53,8 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
       Enter: onClickItem,
       ArrowUp: onArrowUp,
       ArrowDown: onArrowDown,
+      ArrowLeft: onArrowLeft,
+      ArrowRight: onArrowRight,
     };
   };
 
@@ -81,7 +87,12 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
       >
         <div className={classes.list}>
           {chips.map((chip) => (
-            <Chip key={chip.id} onDelete={onDelete} chip={chip} />
+            <Chip
+              key={chip.id}
+              onDelete={onDelete}
+              chip={chip}
+              focused={chip.id === focusedChipId}
+            />
           ))}
 
           <div className={classes.inputContainer}>
