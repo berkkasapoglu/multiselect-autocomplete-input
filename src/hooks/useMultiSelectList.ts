@@ -1,27 +1,25 @@
-import { cloneDeep } from 'lodash';
 import { KeyboardEvent, MouseEvent, useState } from 'react';
 import { IChip } from '../components/chip/Chip.types';
 import { IMenuItem } from '../components/menu-item/MenuItem.types';
 
-function useMultiSelectList({
-  menuItems,
-  setInputValue,
-}: {
+interface IProps {
   menuItems: IMenuItem[];
-  setInputValue: (value: string) => void;
-}) {
+}
+
+function useMultiSelectList({ menuItems }: IProps) {
   const [chips, setChips] = useState<IChip[]>([]);
   const [isMenuExpanded, setIsMenuExpanded] = useState(false);
   const [focusedItemIndex, setFocusedItemIndex] = useState<number>(0);
   const [focusedChipId, setFocusedChipId] = useState<string>();
+  const [inputValue, setInputValue] = useState<string>('');
 
-  const onAdd = (item: IMenuItem) => {
+  const handleAdd = (item: IMenuItem) => {
     const newChip = { id: item.id, label: item.label };
 
     setChips((prev) => [...prev, newChip]);
   };
 
-  const onDelete = (id: string) => {
+  const handleDelete = (id: string) => {
     const newChips = chips.filter((chip) => chip.id !== id);
 
     setChips(newChips);
@@ -55,26 +53,6 @@ function useMultiSelectList({
     e.preventDefault();
   };
 
-  const onClickItem = (e: MouseEvent<HTMLLIElement>) => {
-    if (focusedChipId) {
-      onDelete(focusedChipId);
-      setFocusedChipId(undefined);
-      e.preventDefault();
-      return;
-    }
-
-    if (!isMenuExpanded) return;
-
-    const item = menuItems[focusedItemIndex];
-    if (!item) return;
-
-    if (isItemSelected(item.id)) onDelete(item.id);
-    else onAdd(item);
-
-    setInputValue('');
-    e.preventDefault();
-  };
-
   const onArrowLeft = (e: KeyboardEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
     if (Number(target.selectionStart) >= 1) return;
@@ -97,32 +75,69 @@ function useMultiSelectList({
     setFocusedChipId(chips[prevFocusIndex + 1]?.id);
   };
 
+  const onClickItem = (e: MouseEvent<HTMLLIElement>) => {
+    if (focusedChipId) {
+      handleDelete(focusedChipId);
+      setFocusedChipId(undefined);
+      e.preventDefault();
+      return;
+    }
+
+    if (!isMenuExpanded) return;
+
+    const item = menuItems[focusedItemIndex];
+    if (!item) return;
+
+    if (isItemSelected(item.id)) handleDelete(item.id);
+    else handleAdd(item);
+
+    setInputValue('');
+    e.preventDefault();
+  };
+
   const onEscape = () => {
     if (focusedChipId) return setFocusedChipId(undefined);
 
     if (isMenuExpanded) return setIsMenuExpanded(false);
   };
 
+  const onBackspace = () => {
+    if (!chips.length || inputValue) return;
+
+    const chip = chips.slice(-1)[0] as IChip;
+
+    handleDelete(chip.id);
+  };
+
   const isItemSelected = (id: string) => {
     return chips.some((chip) => chip.id === id);
   };
 
+  const getKeyboardActions = (): Record<string, Function> => {
+    return {
+      Escape: onEscape,
+      Backspace: onBackspace,
+      Tab: onClickItem,
+      Enter: onClickItem,
+      ArrowUp: onArrowUp,
+      ArrowDown: onArrowDown,
+      ArrowLeft: onArrowLeft,
+      ArrowRight: onArrowRight,
+    };
+  };
+
   return {
-    onAdd,
-    onDelete,
-    onClickItem,
-    onArrowDown,
-    onArrowUp,
-    isItemSelected,
     chips,
+    handleAdd,
+    handleDelete,
     isMenuExpanded,
     setIsMenuExpanded,
     focusedItemIndex,
     setFocusedItemIndex,
-    onArrowLeft,
-    onEscape,
     focusedChipId,
-    onArrowRight,
+    inputValue,
+    setInputValue,
+    keyboardActions: getKeyboardActions(),
   };
 }
 export default useMultiSelectList;
