@@ -8,18 +8,18 @@ import convertCharacterToMenuItem, {
   TCharacterResponseData,
 } from '../../helpers/convert-character-to-menuItem';
 import getCharactersByName from '../../services/get-characters';
+import { AxiosError } from 'axios';
 
 function Home() {
   const [inputValue, setInputValue] = useState<string>('');
 
-  const { data, error, isLoading } = useQuery<TCharacterResponse>(
-    ['characters', inputValue],
-    () => getCharactersByName(inputValue),
-    {
-      retry: false,
-      refetchOnWindowFocus: false,
-    }
-  );
+  const { data, error, isLoading } = useQuery<
+    TCharacterResponse,
+    AxiosError<{ error: string }>
+  >(['characters', inputValue], () => getCharactersByName(inputValue), {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 
   const getMenuItems = (): IMenuItem[] => {
     if (!data) return [];
@@ -37,13 +37,16 @@ function Home() {
   };
 
   return (
-    <MultiSelect
-      menuItems={getMenuItems()}
-      onChange={(value) => {
-        setInputValue(value);
-      }}
-      isLoading={isLoading}
-    />
+    <>
+      <MultiSelect
+        menuItems={getMenuItems()}
+        onChange={(value) => {
+          setInputValue(value);
+        }}
+        isLoading={isLoading}
+        error={error?.response?.data?.error}
+      />
+    </>
   );
 }
 export default Home;

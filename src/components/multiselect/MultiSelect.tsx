@@ -14,9 +14,10 @@ interface IProps {
   menuItems: IMenuItem[];
   onChange?: (value: string) => void;
   isLoading?: boolean;
+  error?: string;
 }
 
-function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
+function MultiSelect({ menuItems, onChange, isLoading, error }: IProps) {
   const [value, setValue] = useState<string>('');
   const [inputHeight, setInputHeight] = useState<number>();
 
@@ -128,6 +129,7 @@ function MultiSelect({ menuItems, onChange, isLoading }: IProps) {
 
               setIsMenuExpanded(false);
             }}
+            error={error}
           />
         )}
       </div>

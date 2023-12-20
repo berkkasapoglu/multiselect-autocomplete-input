@@ -15,6 +15,7 @@ export interface IChipMenuProps {
   focusIndex: number;
   setFocusIndex: React.Dispatch<React.SetStateAction<number>>;
   closeDialog: (e: Event) => void;
+  error?: string;
 }
 
 function SelectMenu({
@@ -26,6 +27,7 @@ function SelectMenu({
   focusIndex,
   setFocusIndex,
   closeDialog,
+  error,
 }: IChipMenuProps) {
   const itemsRef = useRef<HTMLLIElement[]>([]);
   const menuRef = useClickOutside<HTMLUListElement>(closeDialog);
@@ -38,6 +40,9 @@ function SelectMenu({
 
   return (
     <ul style={style} className={classes.menu} ref={menuRef}>
+      {error && (
+        <p style={{ textAlign: 'center', marginTop: '50px' }}>{error}</p>
+      )}
       {isLoading && (
         <div className={classes.spinner}>
           <LoadingIcon />

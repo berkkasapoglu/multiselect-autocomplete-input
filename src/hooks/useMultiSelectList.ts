@@ -92,9 +92,9 @@ function useMultiSelectList({
   };
 
   const onEscape = () => {
-    if (isMenuExpanded) return setIsMenuExpanded(false);
+    if (focusedChipId) return setFocusedChipId(undefined);
 
-    if (focusedChipId) setFocusedChipId(undefined);
+    if (isMenuExpanded) return setIsMenuExpanded(false);
   };
 
   const isItemSelected = (id: string) => {
