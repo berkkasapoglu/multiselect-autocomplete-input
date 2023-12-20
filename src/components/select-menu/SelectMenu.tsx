@@ -40,9 +40,7 @@ function SelectMenu({
 
   return (
     <ul style={style} className={classes.menu} ref={menuRef}>
-      {error && (
-        <p style={{ textAlign: 'center', marginTop: '50px' }}>{error}</p>
-      )}
+      {error && <p className={classes.error}>{error}</p>}
       {isLoading && (
         <div className={classes.spinner}>
           <LoadingIcon />
