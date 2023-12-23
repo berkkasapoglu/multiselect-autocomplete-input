@@ -29,7 +29,6 @@ const MenuItem = forwardRef<HTMLLIElement, IProps>(
         ref={ref}
         onClick={(e) => {
           onClick(e);
-          console.log('on click list');
           e.stopPropagation();
         }}
       >
@@ -38,7 +37,6 @@ const MenuItem = forwardRef<HTMLLIElement, IProps>(
           type="checkbox"
           checked={isItemChecked}
           className={classes.checkbox}
-          onClick={() => console.log('on click checkbox')}
         />
         {children}
       </li>
